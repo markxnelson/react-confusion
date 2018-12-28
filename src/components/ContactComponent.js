@@ -3,6 +3,12 @@ import { Breadcrumb, BreadcrumbItem, Button, Label, Row, Col } from 'reactstrap'
 import { Control, LocalForm, Errors } from 'react-redux-form'
 import { Link } from 'react-router-dom';
 
+const required = (val) => val && val.length
+const maxLength = (len) => (val) => !(val) || (val.length <= len)
+const minLength = (len) => (val) => (val) && (val.length >= len)
+const isNumber = (val) => !isNaN(Number(val))
+const validEmail = (val) => /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z0-9]{2,4}$/i.test(val)
+
 class Contact extends Component {
     constructor(props) {
         super(props)
@@ -11,8 +17,8 @@ class Contact extends Component {
     }
 
     handleSubmit(values) {
-        console.log("Current state is: " +  JSON.stringify(values))
-        alert("Current state is: " +  JSON.stringify(values))
+        console.log("Current state is: " + JSON.stringify(values))
+        alert("Current state is: " + JSON.stringify(values))
     }
 
     render() {
@@ -62,25 +68,61 @@ class Contact extends Component {
                             <Row className="form-group">
                                 <Label htmlFor="firstname" md={2}>First Name</Label>
                                 <Col md={10}>
-                                    <Control.text model=".firstname" id="firstname" name="firstname" placeholder="First Name" className="form-control" />
+                                    <Control.text model=".firstname" id="firstname" name="firstname"
+                                        placeholder="First Name" className="form-control"
+                                        validators={{
+                                            required, minLength: minLength(3), maxLength: maxLength(15)
+                                        }} />
+                                    <Errors className="text-danger" model=".firstname" show="touched" messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be grather than 2 chars',
+                                        maxLength: 'Must be 15 chars or less'
+                                    }} />
                                 </Col>
                             </Row>
                             <Row className="form-group">
                                 <Label htmlFor=".lastname" md={2}>Last Name</Label>
                                 <Col md={10}>
-                                    <Control.text model=".lastname" id="lastname" name="lastname" placeholder="Last Name" className="form-control" />
+                                    <Control.text model=".lastname" id="lastname" name="lastname"
+                                        placeholder="Last Name" className="form-control"
+                                        validators={{
+                                            required, minLength: minLength(3), maxLength: maxLength(15)
+                                        }} />
+                                    <Errors className="text-danger" model=".lastname" show="touched" messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be grather than 2 chars',
+                                        maxLength: 'Must be 15 chars or less'
+                                    }} />
                                 </Col>
                             </Row>
                             <Row className="form-group">
                                 <Label htmlFor="telnum" md={2}>Contact Tel.</Label>
                                 <Col md={10}>
-                                    <Control.text model=".telnum" id="telnum" name="telnum" placeholder="Tel. Number" className="form-control" />
+                                    <Control.text model=".telnum" id="telnum" name="telnum"
+                                        placeholder="Tel. Number" className="form-control"
+                                        validators={{
+                                            required, minLength: minLength(3), maxLength: maxLength(15), isNumber
+                                        }} />
+                                    <Errors className="text-danger" model=".telnum" show="touched" messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be grather than 2 numbers',
+                                        maxLength: 'Must be 15 numbers or less',
+                                        isNumber: 'Must contain only numbers'
+                                    }} />
                                 </Col>
                             </Row>
                             <Row className="form-group">
                                 <Label htmlFor="email" md={2}>Email</Label>
                                 <Col md={10}>
-                                    <Control.text model=".email" id="email" name="email" placeholder="Email" className="form-control" />
+                                    <Control.text model=".email" id="email" name="email"
+                                        placeholder="Email" className="form-control"
+                                        validators={{
+                                            required, validEmail
+                                        }} />
+                                    <Errors className="text-danger" model=".email" show="touched" messages={{
+                                        required: 'Required',
+                                        validEmail: 'Must be a valid email address'
+                                    }} />
                                 </Col>
                             </Row>
                             <Row className="form-group">
@@ -106,7 +148,7 @@ class Contact extends Component {
                                 </Col>
                             </Row>
                             <Row className="form-group">
-                                <Col md={{size: 10, offset: 2}}>
+                                <Col md={{ size: 10, offset: 2 }}>
                                     <Button type="submit" color="primary">Send Feedback</Button>
                                 </Col>
                             </Row>
